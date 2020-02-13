@@ -69,7 +69,7 @@ parameters:
       displayName: "deps.edn dependencies"
       name: "dependencies"
       required: false
-  - repoFilters:
+  - repoFilter:
       description: "The set of Repositories."
       displayName: "Repository Scope"
       name: "scope"
