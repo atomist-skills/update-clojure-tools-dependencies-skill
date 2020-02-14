@@ -41,10 +41,10 @@ skill:
     timeout: 60
 
 commands:
-- name: ShowClojureToolsDependencies
+- name: ShowToolsDepsDependencies
   description: "summary of the clojure tools dependencies"
   pattern: "^clj fingerprints.*$"
-- name: UpdateClojureToolsDependency
+- name: UpdateToolsDepsDependency
   description: "update one dependency"
   pattern: "^clj update.*$"
 

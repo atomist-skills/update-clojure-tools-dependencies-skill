@@ -14,7 +14,7 @@
 
     returns array of leiningen fingerprints or empty [] if project.clj is not present"
   [project]
-  (let [f (io/file (. ^js project -baseDir) "project.clj")]
+  (let [f (io/file (. ^js project -baseDir) "deps.edn")]
     (if (fs/fexists? (.getPath f))
       (atomist.rewrite/deps f)
       [])))
@@ -34,7 +34,7 @@
   ((sdm/commit-then-PR
     (fn [p] (go
              (try
-               (let [f (io/file (. ^js project -baseDir) "project.clj")]
+               (let [f (io/file (. ^js project -baseDir) "deps.edn")]
                  (io/spit f (atomist.rewrite/edit-library (io/slurp f) library-name library-version)))
                :success
                (catch :default ex

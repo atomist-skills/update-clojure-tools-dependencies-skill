@@ -18,11 +18,24 @@
             [atomist.deps :as deps])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
+(defn just-fingerprints
+  [request project]
+  (go
+   (try
+     (let [fingerprints (tools/extract project)]
+       ;; return the fingerprints in a form that they can be added to the graph
+       fingerprints)
+     (catch :default ex
+       (log/error "unable to compute deps.edn fingerprints")
+       (log/error ex)
+       {:error ex
+        :message "unable to compute deps.edn fingerprints"}))))
+
 (defn compute-fingerprints
   [request project]
   (go
    (try
-     (let [fingerprints (leiningen/extract project)]
+     (let [fingerprints (tools/extract project)]
        ;; first create PRs for any off target deps
        (<! (deps/apply-policy-target
             (assoc request :project project :fingerprints fingerprints)
@@ -30,10 +43,10 @@
        ;; return the fingerprints in a form that they can be added to the graph
        fingerprints)
      (catch :default ex
-       (log/error "unable to compute leiningen fingerprints")
+       (log/error "unable to compute deps.edn fingerprints")
        (log/error ex)
        {:error ex
-        :message "unable to compute leiningen fingerprints"}))))
+        :message "unable to compute deps.edn fingerprints"}))))
 
 (defn check-for-targets-to-apply [handler]
   (fn [request]
@@ -66,7 +79,7 @@
 (defn fp-command-handler [request]
   ((-> (api/finished :message "handling extraction CommandHandler")
        (api/show-results-in-slack :result-type "fingerprints")
-       (api/run-sdm-project-callback compute-fingerprints)
+       (api/run-sdm-project-callback just-fingerprints)
        (log-attempt)
        (api/create-ref-from-first-linked-repo)
        (api/extract-linked-repos)
@@ -107,8 +120,8 @@
        (contains? (:data request) :CommitFingerprintImpact)
        (handle-impact-event request)
 
-       (= "ShowLeiningenDependencies" (:command request))
+       (= "ShowToolsDepsDependencies" (:command request))
        (fp-command-handler request)
 
-       (= "UpdateLeiningenDependency" (:command request))
+       (= "UpdateToolsDepsDependency" (:command request))
        (update-command-handler request)))))
