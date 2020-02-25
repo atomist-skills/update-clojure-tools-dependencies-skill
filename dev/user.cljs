@@ -18,20 +18,48 @@
 (def github-token (.. js/process -env -GITHUB_TOKEN))
 
 (comment
- ;; this will actually raise a PR when run with a real project
- (let [project #js {:baseDir "/Users/slim/atomist/atomisthqa/clj1"}]
-   (go (println (<!
-                 (deps/apply-policy-target
-                  {:fingerprints (atomist.clojure-tools/extract project)
-                   :project project
-                   :ref {:branch "master"}
-                   :secrets [{:uri "atomist://api-key" :value token}]
-                   :configurations [{:parameters [{:name "policy" :value "manualConfiguration"}
-                                                  {:name "dependencies" :value "[[org.clojure/clojure \"1.10.1\"]]"}]}
-                                    {:parameters [{:name "policy" :value "latestSemVerAvailable"}
-                                                  {:name "dependencies" :value "[mount]"}]}
-                                    {:parameters [{:name "policy" :value "latestSemVerUsed"}
-                                                  {:name "dependencies" :value "[com.atomist/common]"}]}]}
-                  (fn [_ pr-opts lib-name lib-version]
-                    (log/info "update " lib-name lib-version)
-                    (go :done))))))))
+ ;; this should fail because of a bad manualConfiguration
+ (atomist.main/handler #js {:data {:Push [{:branch "master"
+                                           :repo {:name "depsedn"
+                                                  :org {:owner "atomisthqa"
+                                                        :scmProvider {:providerId "zjlmxjzwhurspem"
+                                                                      :credential {:secret github-token}}}}
+                                           :after {:message ""}}]}
+                            :secrets [{:uri "atomist://api-key" :value token}]
+                            :configurations [{:parameters [{:name "policy" :value "manualConfiguration"}
+                                                           {:name "dependencies" :value "blah"}]}]
+                            :extensions {:team_id "AK748NQC5"}}
+                       (fn [& args] (log/info "sendreponse " args)))
+
+ ;; this should work
+ (atomist.main/handler #js {:data {:Push [{:branch "master"
+                                           :repo {:name "depsedn"
+                                                  :org {:owner "atomisthqa"
+                                                        :scmProvider {:providerId "zjlmxjzwhurspem"
+                                                                      :credential {:secret github-token}}}}
+                                           :after {:message ""}}]}
+                            :secrets [{:uri "atomist://api-key" :value token}]
+                            :configurations [{:parameters [{:name "policy" :value "manualConfiguration"}
+                                                           {:name "dependencies" :value "[[org.clojure/clojure \"1.10.2\"]]"}]}]
+                            :extensions {:team_id "AK748NQC5"}}
+                       (fn [& args] (log/info "sendreponse " args)))
+
+ ;; command handler to extract
+ (atomist.main/handler #js {:command "ShowToolsDepsDependencies"
+                            :source {:slack {:channel {:id "CUFC92AFJ"}
+                                             :user {:id "UDF0NFB5M"}}}
+                            :team {:id "AK748NQC5"}
+                            :raw_message "clj fingerprints"
+                            :secrets [{:uri "atomist://api-key" :value token}]}
+                       (fn [& args] (log/info "sendreponse " args)))
+
+ ;; command handler to update
+ (atomist.main/handler #js {:command "UpdateToolsDepsDependency"
+                            :source {:slack {:channel {:id "CUFC92AFJ"}
+                                             :user {:id "UDF0NFB5M"}}}
+                            :team {:id "AK748NQC5"}
+                            :parameters [{:name "dependency" :value "[org.clojure/clojurescript \"1.10.522\"]"}]
+                            :raw_message "clj update"
+                            :secrets [{:uri "atomist://api-key" :value token}]}
+                       (fn [& args] (log/info "sendreponse " args)))
+ )

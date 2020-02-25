@@ -1,10 +1,13 @@
 (ns atomist.clojure-tools
-  (:require [atomist.rewrite]
-            [cljs-node-io.core :as io]
+  (:require [cljs-node-io.core :as io]
             [cljs-node-io.fs :as fs]
             [atomist.cljs-log :as log]
             [atomist.sdmprojectmodel :as sdm]
-            [cljs.core.async :refer [<! timeout chan]])
+            [cljs.core.async :refer [<! timeout chan]]
+            [atomist.json :as json]
+            [atomist.sha :as sha]
+            [goog.string :as gstring]
+            [goog.string.format])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn extract
@@ -16,8 +19,29 @@
   [project]
   (let [f (io/file (. ^js project -baseDir) "deps.edn")]
     (if (fs/fexists? (.getPath f))
-      (atomist.rewrite/deps f)
+      (let [deps (-> (io/slurp f) (cljs.reader/read-string))]
+        (->> (:deps deps)
+             (map (fn [[sym version]] [(str sym) version]))
+             (map (fn [data]
+                    {:type "clojure-tools-deps"
+                     :name (gstring/replaceAll (nth data 0) "/" "::")
+                     :displayName (nth data 0)
+                     :displayValue (nth data 1)
+                     :displayType "Clojure Tools Deps"
+                     :data data
+                     :sha (sha/sha-256 (json/->str data))
+                     :abbreviation "deps.edn"
+                     :version "0.0.1"}))))
       [])))
+
+(defn- edit-library [edn lib version]
+  (assoc edn :deps
+             (->> (:deps edn)
+                  (map (fn [[l m]]
+                         (if (= (str l) lib)
+                           [l {:mvn/version version}]
+                           [l m])))
+                  (into {}))))
 
 (defn- apply-library-editor
   "apply a library edit inside of a PR
@@ -30,15 +54,12 @@
       library-version - leiningen library version string
 
     returns channel"
-  [project pr-opts library-name library-version]
-  ((sdm/commit-then-PR
-    (fn [p] (go
-             (try
-               (let [f (io/file (. ^js project -baseDir) "deps.edn")]
-                 (io/spit f (atomist.rewrite/edit-library (io/slurp f) library-name library-version)))
-               :success
-               (catch :default ex
-                 (log/error "failure updating project.clj for dependency change" ex)
-                 :failure))))
-    pr-opts) project))
-
+  [project library-name library-version]
+  (go
+   (try
+     (let [f (io/file (. ^js project -baseDir) "deps.edn")]
+       (io/spit f (with-out-str (cljs.pprint/pprint (edit-library (cljs.reader/read-string (io/slurp f)) library-name library-version)))))
+     :success
+     (catch :default ex
+       (log/error "failure updating deps.edn for dependency change" ex)
+       :failure))))
