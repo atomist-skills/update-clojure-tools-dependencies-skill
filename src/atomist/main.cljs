@@ -60,30 +60,3 @@
                                                        :validInput "[lib version]"}]
                        [api/extract-cli-parameters [[nil "--dependency dependency" "[lib version]"]]])]
                      deps/mw-validate-policy))
-
-
-(comment
- (def x (api/compose-middleware
-         [(fn [handler] (fn [request]
-                          (println "third " request)
-                          (handler request)))]
-         [(fn [handler & args] (fn [request]
-                                 (println "second " request)
-                                 (handler (assoc request :args args)))) {:name "dependency"
-                                                                         :required true
-                                                                         :pattern ".*"
-                                                                         :validInput "[lib version]"}]
-         [(fn [handler & args] (fn [request]
-                                 (println "first " request)
-                                 (handler (assoc request :args1 args)))) [[nil "--dependency dependency" "[lib version]"]]]))
-
- (def y (api/compose-middleware
-         [deps/set-up-target-configuration]
-         [api/check-required-parameters {:name "dependency"
-                                         :required true
-                                         :pattern ".*"
-                                         :validInput "[lib version]"}]
-         [api/extract-cli-parameters [[nil "--dependency dependency" "[lib version]"]]]))
-
- ((-> (fn [request] (println "done " request))
-      (y)) {:parameters [{:name "dependency" :value "[lib version]"}]}))
