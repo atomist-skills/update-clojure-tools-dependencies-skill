@@ -15,13 +15,15 @@
 
     we use cljs-node-io Files when we call atomist.lein/deps
 
+    fingerprints names should not have '/'s - they should be transformed to '::'s
+
     returns array of leiningen fingerprints or empty [] if project.clj is not present"
   [project]
   (let [f (io/file (. ^js project -baseDir) "deps.edn")]
     (if (fs/fexists? (.getPath f))
       (let [deps (-> (io/slurp f) (cljs.reader/read-string))]
         (->> (:deps deps)
-             (map (fn [[sym version]] [(str sym) version]))
+             (map (fn [[sym version]] [(str sym) (:mvn/version version)]))
              (map (fn [data]
                     {:type "clojure-tools-deps"
                      :name (gstring/replaceAll (nth data 0) "/" "::")
@@ -50,7 +52,7 @@
       project - the SDM project
       f - this is cljs-node-io File, not an SDM File
       pr-opts - must conform to {:keys [branch target-branch title body]}
-      library-name - leiningen library name string
+      library-name - leiningen library name string (will have '/'s
       library-version - leiningen library version string
 
     returns channel"
