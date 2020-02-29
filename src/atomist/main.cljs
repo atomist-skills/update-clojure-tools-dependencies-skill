@@ -50,6 +50,7 @@
   (deps/deps-handler data sendreponse
                      ["ShowToolsDepsDependencies"
                       just-fingerprints]
+                     ["SyncToolsDepsDependency"]
                      ["UpdateToolsDepsDependency"
                       compute-fingerprints
                       (api/compose-middleware

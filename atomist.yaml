@@ -47,6 +47,9 @@ commands:
 - name: UpdateToolsDepsDependency
   description: "update one dependency"
   pattern: "^clj update.*$"
+- name: SyncToolsDepsDependency
+  description: "update one dependency"
+  pattern: "^clj sync.*$"
 
 parameters:
   - singleChoice:
