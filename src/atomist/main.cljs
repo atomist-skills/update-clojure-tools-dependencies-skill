@@ -1,7 +1,6 @@
 (ns atomist.main
   (:require [cljs.pprint :refer [pprint]]
             [cljs.core.async :refer [<! >! timeout chan]]
-            [goog.string :as gstring]
             [goog.string.format]
             [atomist.cljs-log :as log]
             [atomist.clojure-tools :as tools]
@@ -10,7 +9,7 @@
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn just-fingerprints
-  [request project]
+  [_ project]
   (go
    (try
      (let [fingerprints (tools/extract project)]
