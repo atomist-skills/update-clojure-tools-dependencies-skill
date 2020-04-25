@@ -21,8 +21,8 @@ skill:
   author: Atomist
   description: Automatically update dependencies based on your own policy
   long_description: |
-    Track all versions of deps.edn dependencies and allow users to set
-    cross repo targets for dependency versions.
+    Track all versions of deps.edn/project.clj dependencies
+    and allow users to set cross repo targets for dependency versions.
   category:
   - productivity
   license: Apache-2.0
@@ -68,7 +68,7 @@ parameters:
           text: "manual"
           value: "manualConfiguration"
   - string:
-      description: "Manually Configured set of deps.edn dependencies"
+      description: "Manually Configured set of mvn dependency targets"
       displayName: "deps.edn dependencies"
       name: "dependencies"
       lineStyle: "multiple"

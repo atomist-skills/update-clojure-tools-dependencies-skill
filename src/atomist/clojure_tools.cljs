@@ -9,6 +9,15 @@
             [goog.string.format])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
+(defn ->coordinate [[n v]]
+  (merge
+   {:version v}
+   (if-let [[_ g a] (re-find #"(.*)/(.*)" n)]
+     {:group g
+      :artifact a}
+     {:group n
+      :artifact n})))
+
 (defn extract
   "extract fingerprints from a project.clj file
 
@@ -19,19 +28,19 @@
     returns array of leiningen fingerprints or empty [] if project.clj is not present"
   [project]
   (let [f (io/file (. ^js project -baseDir) "deps.edn")]
-    (if (fs/fexists? (.getPath f))
+    (if (.exists f)
       (let [deps (-> (io/slurp f) (cljs.reader/read-string))]
         (->> (:deps deps)
              (map (fn [[sym version]] [(str sym) (:mvn/version version)]))
              (map (fn [data]
-                    {:type "clojure-tools-deps"
+                    {:type "maven-direct-dep"
                      :name (gstring/replaceAll (nth data 0) "/" "::")
                      :displayName (nth data 0)
                      :displayValue (nth data 1)
-                     :displayType "Clojure Tools Deps"
-                     :data data
+                     :displayType "MVN Coordinate"
+                     :data (->coordinate data)
                      :sha (sha/sha-256 (json/->str data))
-                     :abbreviation "deps.edn"
+                     :abbreviation "m2"
                      :version "0.0.1"}))))
       [])))
 

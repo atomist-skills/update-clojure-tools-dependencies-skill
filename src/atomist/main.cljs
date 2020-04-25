@@ -29,7 +29,7 @@
        ;; first create PRs for any off target deps
        (<! (deps/apply-policy-targets
             (assoc request :project project :fingerprints fingerprints)
-            "clojure-tools-deps"
+            "maven-direct-dep"
             tools/apply-library-editor))
        ;; return the fingerprints in a form that they can be added to the graph
        fingerprints)
