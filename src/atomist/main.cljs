@@ -11,33 +11,33 @@
 (defn just-fingerprints
   [_ project]
   (go
-   (try
-     (let [fingerprints (tools/extract project)]
+    (try
+      (let [fingerprints (tools/extract project)]
        ;; return the fingerprints in a form that they can be added to the graph
-       fingerprints)
-     (catch :default ex
-       (log/error "unable to compute deps.edn fingerprints")
-       (log/error ex)
-       {:error ex
-        :message "unable to compute deps.edn fingerprints"}))))
+        fingerprints)
+      (catch :default ex
+        (log/error "unable to compute deps.edn fingerprints")
+        (log/error ex)
+        {:error ex
+         :message "unable to compute deps.edn fingerprints"}))))
 
 (defn compute-fingerprints
   [request project]
   (go
-   (try
-     (let [fingerprints (tools/extract project)]
+    (try
+      (let [fingerprints (tools/extract project)]
        ;; first create PRs for any off target deps
-       (<! (deps/apply-policy-targets
-            (assoc request :project project :fingerprints fingerprints)
-            "maven-direct-dep"
-            tools/apply-library-editor))
+        (<! (deps/apply-policy-targets
+             (assoc request :project project :fingerprints fingerprints)
+             "maven-direct-dep"
+             tools/apply-library-editor))
        ;; return the fingerprints in a form that they can be added to the graph
-       fingerprints)
-     (catch :default ex
-       (log/error "unable to compute deps.edn fingerprints")
-       (log/error ex)
-       {:error ex
-        :message "unable to compute deps.edn fingerprints"}))))
+        fingerprints)
+      (catch :default ex
+        (log/error "unable to compute deps.edn fingerprints")
+        (log/error ex)
+        {:error ex
+         :message "unable to compute deps.edn fingerprints"}))))
 
 (defn ^:export handler
   "handler

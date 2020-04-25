@@ -46,12 +46,12 @@
 
 (defn- edit-library [edn lib version]
   (assoc edn :deps
-             (->> (:deps edn)
-                  (map (fn [[l m]]
-                         (if (= (str l) lib)
-                           [l {:mvn/version version}]
-                           [l m])))
-                  (into {}))))
+         (->> (:deps edn)
+              (map (fn [[l m]]
+                     (if (= (str l) lib)
+                       [l {:mvn/version version}]
+                       [l m])))
+              (into {}))))
 
 (defn- apply-library-editor
   "apply a library edit inside of a PR
@@ -66,10 +66,10 @@
     returns channel"
   [project library-name library-version]
   (go
-   (try
-     (let [f (io/file (. ^js project -baseDir) "deps.edn")]
-       (io/spit f (with-out-str (cljs.pprint/pprint (edit-library (cljs.reader/read-string (io/slurp f)) library-name library-version)))))
-     :success
-     (catch :default ex
-       (log/error "failure updating deps.edn for dependency change" ex)
-       :failure))))
+    (try
+      (let [f (io/file (. ^js project -baseDir) "deps.edn")]
+        (io/spit f (with-out-str (cljs.pprint/pprint (edit-library (cljs.reader/read-string (io/slurp f)) library-name library-version)))))
+      :success
+      (catch :default ex
+        (log/error "failure updating deps.edn for dependency change" ex)
+        :failure))))
