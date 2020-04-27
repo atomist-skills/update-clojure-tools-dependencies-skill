@@ -66,4 +66,62 @@ These queries are not working.
 }
 ```
 
+## Fingerprint Data
+
+### Maven
+
+```
+type = maven-direct-dep
+{
+  "group": "atomist",
+  "artifact": "common",
+  "version": "1.35"
+}
+```
+
+### Npm
+
+```
+type = npm-project-dep
+["lib" "version"]
+```
+
+## Policy
+
+
+
+### Maven
+
+```
+manual:
+["group:artifact:version",...]
+latest:
+["group:artifact",...]
+```
+
+### Npm
+
+```
+manual:
+{"express": "4.17.1"}
+latest:
+["express",...]
+```
+
+### Leiningen
+```
+manual:
+[["library" "version"] ...]
+latest:
+["library" ...]
+```
+
+### Tools deps.edn
+
+```
+manual:
+[["library" "version"] ...]
+latest:
+["library" ...]
+```
 

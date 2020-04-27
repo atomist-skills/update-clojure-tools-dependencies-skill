@@ -30,7 +30,11 @@
         (<! (deps/apply-policy-targets
              (assoc request :project project :fingerprints fingerprints)
              "maven-direct-dep"
-             tools/apply-library-editor))
+             tools/apply-library-editor
+             tools/data->library-version
+             tools/library-version->data
+             tools/data->sha
+             tools/library-name->name))
        ;; return the fingerprints in a form that they can be added to the graph
         fingerprints)
       (catch :default ex

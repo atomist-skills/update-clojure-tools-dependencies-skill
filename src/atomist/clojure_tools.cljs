@@ -6,8 +6,25 @@
             [atomist.json :as json]
             [atomist.sha :as sha]
             [goog.string :as gstring]
-            [goog.string.format])
+            [goog.string.format]
+            [clojure.string :as s])
   (:require-macros [cljs.core.async.macros :refer [go]]))
+
+(defn library-name->name [s]
+  (-> s
+      (s/replace-all #"@" "")
+      (s/replace-all #"/" "::")))
+
+(defn data->sha [data]
+  (sha/sha-256 (json/->str data)))
+
+(defn data->library-version [data]
+  [(if (= (:group data) (:artifact data))
+     (gstring/format "%s/%s" (:group data) (:artifact data))
+     (:artifact data)) (:version data)])
+
+(defn library-version->data [[library version]]
+  )
 
 (defn ->coordinate [[n v]]
   (merge
@@ -34,12 +51,12 @@
              (map (fn [[sym version]] [(str sym) (:mvn/version version)]))
              (map (fn [data]
                     {:type "maven-direct-dep"
-                     :name (gstring/replaceAll (nth data 0) "/" "::")
+                     :name (library-name->name (nth data 0))
                      :displayName (nth data 0)
                      :displayValue (nth data 1)
                      :displayType "MVN Coordinate"
                      :data (->coordinate data)
-                     :sha (sha/sha-256 (json/->str data))
+                     :sha (data->sha (->coordinate data))
                      :abbreviation "m2"
                      :version "0.0.1"}))))
       [])))
@@ -64,10 +81,12 @@
       library-version - leiningen library version string
 
     returns channel"
-  [project library-name library-version]
+  [project target-fingerprint]
   (go
     (try
-      (let [f (io/file (. ^js project -baseDir) "deps.edn")]
+      (let [f (io/file (. ^js project -baseDir) "deps.edn")
+            [library-name library-version] (data->library-version (:data target-fingerprint))]
+        (log/info "applying " library-name " and " library-version)
         (io/spit f (with-out-str (cljs.pprint/pprint (edit-library (cljs.reader/read-string (io/slurp f)) library-name library-version)))))
       :success
       (catch :default ex
