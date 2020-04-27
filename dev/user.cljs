@@ -9,7 +9,6 @@
 
 (def token (.. js/process -env -API_KEY_SLIMSLENDERSLACKS_PROD_GITHUB_AUTH))
 (def github-token (.. js/process -env -GITHUB_TOKEN))
-(println token)
 
 (comment
 
@@ -55,14 +54,16 @@
 
  ;; command handler to update
  (atomist.main/handler #js {:command "UpdateToolsDepsDependency"
-                            :source {:slack {:channel {:id "CUFC92AFJ"}
-                                             :user {:id "UDF0NFB5M"}}}
-                            :team {:id "AK748NQC5"}
+                            :source {:slack {:channel {:id "C012TCG93HN"}
+                                             :user {:id "U2ATJPCSK"}
+                                             :team {:id "T29E48P34"}}}
+                            :team {:id "T29E48P34" :name "atomist-community"}
+                            :correlation_id "corrid"
+                            :api_version "1"
                             :parameters [{:name "dependency" :value "[org.clojure/clojurescript \"1.10.522\"]"}]
                             :raw_message "clj update"
                             :secrets [{:uri "atomist://api-key" :value token}]}
-                       (fn [& args] (log/info "sendreponse " args)))
-
+                       (fn [& args] (cljs.pprint/pprint (js->clj (first args)))))
 
  (go (println (<! (atomist.graphql-channels/head-commits->channel
                    {:secrets [{:uri "atomist://api-key" :value token}]

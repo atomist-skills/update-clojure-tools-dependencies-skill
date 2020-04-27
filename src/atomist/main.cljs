@@ -21,20 +21,20 @@
         {:error ex
          :message "unable to compute deps.edn fingerprints"}))))
 
+(def apply-policy (partial deps/apply-policy-targets {:type "maven-direct-dep"
+                                                      :apply-library-editor tools/apply-library-editor
+                                                      :->library-version tools/data->library-version
+                                                      :->data tools/library-version->data
+                                                      :->sha tools/data->sha
+                                                      :->name tools/library-name->name}))
+
 (defn compute-fingerprints
   [request project]
   (go
     (try
       (let [fingerprints (tools/extract project)]
        ;; first create PRs for any off target deps
-        (<! (deps/apply-policy-targets
-             (assoc request :project project :fingerprints fingerprints)
-             "maven-direct-dep"
-             tools/apply-library-editor
-             tools/data->library-version
-             tools/library-version->data
-             tools/data->sha
-             tools/library-name->name))
+        (<! (apply-policy (assoc request :project project :fingerprints fingerprints)))
        ;; return the fingerprints in a form that they can be added to the graph
         fingerprints)
       (catch :default ex

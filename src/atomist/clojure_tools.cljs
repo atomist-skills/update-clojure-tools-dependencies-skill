@@ -20,11 +20,18 @@
 
 (defn data->library-version [data]
   [(if (= (:group data) (:artifact data))
-     (gstring/format "%s/%s" (:group data) (:artifact data))
-     (:artifact data)) (:version data)])
+     (:artifact data)
+     (gstring/format "%s/%s" (:group data) (:artifact data)))
+   (:version data)])
 
 (defn library-version->data [[library version]]
-  )
+  (assoc
+   (if-let [[_ group artifact] (re-find #"(.*)/(.*)" library)]
+     {:group group
+      :artifact artifact}
+     {:group library
+      :artifact library})
+   :version version))
 
 (defn ->coordinate [[n v]]
   (merge
