@@ -1,81 +1,66 @@
-#
-#  Copyright © 2019 Atomist, Inc.
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-#
-
 skill:
-  name: "atomist/update-clojure-tools-dependencies"
-  title: Update Clojure tools Dependencies
-  version: 0.1.8
-  author: Atomist
   description: Automatically update dependencies based on your own policy
+  category:
+    - productivity
+  package:
+    use: atomist/package-cljs-skill
+  repository: 'https://github.com/atomist-skills/update-leiningen-dependencies'
+  license: Apache-2.0
+  homepage: 'https://github.com/atomist-skills/update-leiningen-dependencies'
+  name: atomist/update-clojure-tools-dependencies
   long_description: |
     Track all versions of deps.edn/project.clj dependencies
     and allow users to set cross repo targets for dependency versions.
-  category:
-  - productivity
-  license: Apache-2.0
-  homepage: https://github.com/atomist-skills/update-leiningen-dependencies
-  repository: https://github.com/atomist-skills/update-leiningen-dependencies
-  icon: https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Clojure_logo.svg/2000px-Clojure_logo.svg.png
+  icon: >-
+    https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Clojure_logo.svg/2000px-Clojure_logo.svg.png
+  title: Update Clojure tools Dependencies
+  author: Atomist
   dispatch: single
-
-  package:
-    use: 'atomist/package-cljs-skill'
-
   runtime:
     name: nodejs10
     entry_point: eventhandler
     memory: 256
     timeout: 60
-
+  version: 0.1.8
 commands:
-- name: ShowToolsDepsDependencies
-  description: "summary of the clojure tools dependencies"
-  pattern: "^clj fingerprints.*$"
-- name: UpdateToolsDepsDependency
-  description: "update one dependency"
-  pattern: "^clj update.*$"
-- name: SyncToolsDepsDependency
-  description: "update one dependency"
-  pattern: "^clj sync.*$"
-
+  - name: ShowToolsDepsDependencies
+    description: summary of the clojure tools dependencies
+    pattern: ^clj fingerprints.*$
+  - name: UpdateToolsDepsDependency
+    description: update one dependency
+    pattern: ^clj update.*$
+  - name: SyncToolsDepsDependency
+    description: update one dependency
+    pattern: ^clj sync.*$
 parameters:
   - singleChoice:
-      description: "Choose a policy for how target dependencies should be discovered by this skill"
-      displayName: "Target Policy"
-      name: "policy"
+      description: >-
+        Choose a policy for how target dependencies should be discovered by this
+        skill
+      displayName: Target Policy
+      name: policy
       required: true
       options:
-        - description: "Use the latest semver version found within current set of Projects"
-          text: "latest semver used"
-          value: "latestSemVerUsed"
-        - description: "Use the latest semver available in clojars"
-          text: "latest semver available"
-          value: "latestSemVerAvailable"
-        - description: "Use the set of deps.edn dependencies configured manually in this Skill"
-          text: "manual"
-          value: "manualConfiguration"
+        - description: Use the latest semver version found within current set of Projects
+          text: latest semver used
+          value: latestSemVerUsed
+        - description: Use the latest semver available in clojars
+          text: latest semver available
+          value: latestSemVerAvailable
+        - description: >-
+            Use the set of deps.edn dependencies configured manually in this
+            Skill
+          text: manual
+          value: manualConfiguration
   - string:
-      description: "Manually Configured set of mvn dependency targets"
-      displayName: "deps.edn dependencies"
-      name: "dependencies"
-      lineStyle: "multiple"
-      placeHolder: "[[lib-symbol \"version\"]]"
+      description: Manually Configured set of mvn dependency targets
+      displayName: deps.edn dependencies
+      name: dependencies
+      lineStyle: multiple
+      placeHolder: '[[lib-symbol "version"]]'
       required: false
   - repoFilter:
-      description: "The set of Repositories."
-      displayName: "Repository Scope"
-      name: "scope"
+      description: The set of Repositories.
+      displayName: Repository Scope
+      name: scope
       required: false
