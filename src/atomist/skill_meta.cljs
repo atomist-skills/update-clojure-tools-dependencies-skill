@@ -3,6 +3,6 @@
 
 (def module-name "update-clojure-tools-dependencies-skill")
 (def path ".")
-(def version "0.1.10")
-(def tag "v0.1.10")
-(def generated-at "2020-04-28T23:32:10Z")
+(def version "0.1.11")
+(def tag "v0.1.11")
+(def generated-at "2020-05-01T02:07:26Z")
