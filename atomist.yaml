@@ -39,7 +39,17 @@ skill:
     entry_point: eventhandler
     memory: 256
     timeout: 60
-
+resource_providers:
+  - name: github
+    description: GitHub
+    typeName: GitHubAppResourceProvider
+    minRequired: 1
+    maxAllowed: 1
+  - name: slack
+    description: Slack
+    typeName: SlackResourceProvider
+    minRequired: 0
+    maxAllowed: 1
 commands:
 - name: ShowToolsDepsDependencies
   description: "summary of the clojure tools dependencies"
