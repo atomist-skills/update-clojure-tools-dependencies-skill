@@ -25,5 +25,4 @@
 
   (-> (fake-command-handler "T29E48P34" "ShowToolsDepsDependencies" "clj fingerprints" "C012TCG93HN" "U2ATJPCSK")
       (assoc :parameters [{:name "dependency" :value "[org.clojure/clojurescript \"1.10.522\"]"}])
-      (call-event-handler atomist.main/handler))
-  )
+      (call-event-handler atomist.main/handler)))
