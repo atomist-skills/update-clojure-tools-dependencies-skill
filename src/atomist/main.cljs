@@ -9,10 +9,10 @@
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn just-fingerprints
-  [_ project]
+  [request]
   (go
     (try
-      (let [fingerprints (tools/extract project)]
+      (let [fingerprints (tools/extract (:project request))]
        ;; return the fingerprints in a form that they can be added to the graph
         fingerprints)
       (catch :default ex
@@ -29,12 +29,12 @@
                                                       :->name tools/library-name->name}))
 
 (defn compute-fingerprints
-  [request project]
+  [request]
   (go
     (try
-      (let [fingerprints (tools/extract project)]
+      (let [fingerprints (tools/extract (:project request))]
        ;; first create PRs for any off target deps
-        (<! (apply-policy (assoc request :project project :fingerprints fingerprints)))
+        (<! (apply-policy (assoc request :fingerprints fingerprints)))
        ;; return the fingerprints in a form that they can be added to the graph
         fingerprints)
       (catch :default ex
@@ -51,11 +51,9 @@
       sendreponse - callback ([obj]) puts an outgoing message on the response topic"
   [data sendreponse]
   (deps/deps-handler data sendreponse
-                     ["ShowToolsDepsDependencies"
-                      just-fingerprints]
+                     ["ShowToolsDepsDependencies"]
                      ["SyncToolsDepsDependency"]
                      ["UpdateToolsDepsDependency"
-                      compute-fingerprints
                       (api/compose-middleware
                        [deps/set-up-target-configuration]
                        [api/check-required-parameters {:name "dependency"
@@ -63,4 +61,6 @@
                                                        :pattern ".*"
                                                        :validInput "[lib version]"}]
                        [api/extract-cli-parameters [[nil "--dependency dependency" "[lib version]"]]])]
+                     just-fingerprints
+                     compute-fingerprints
                      deps/mw-validate-policy))
