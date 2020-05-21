@@ -34,20 +34,20 @@
   [handler]
   (fn [request]
     (go
-     (try
-       (let [configurations (->> (:configurations request)
-                                 (map #(if (= "manualConfiguration" (deps/policy-type %))
-                                         (transform-dependency-to-edn-format %)
-                                         %))
-                                 (map deps/validate-policy))]
-         (if (->> configurations
-                  (filter :error)
-                  (empty?))
-           (<! (handler (assoc request :configurations configurations)))
-           (<! (api/finish request :failure (->> configurations
-                                                 (map :error)
-                                                 (interpose ",")
-                                                 (apply str))))))
-       (catch :default ex
-         (log/error ex)
-         (<! (api/finish request :failure (-> (ex-data ex) :message))))))))
+      (try
+        (let [configurations (->> (:configurations request)
+                                  (map #(if (= "manualConfiguration" (deps/policy-type %))
+                                          (transform-dependency-to-edn-format %)
+                                          %))
+                                  (map deps/validate-policy))]
+          (if (->> configurations
+                   (filter :error)
+                   (empty?))
+            (<! (handler (assoc request :configurations configurations)))
+            (<! (api/finish request :failure (->> configurations
+                                                  (map :error)
+                                                  (interpose ",")
+                                                  (apply str))))))
+        (catch :default ex
+          (log/error ex)
+          (<! (api/finish request :failure (-> (ex-data ex) :message))))))))

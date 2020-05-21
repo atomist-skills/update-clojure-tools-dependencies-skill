@@ -11,7 +11,7 @@
 (comment
 
  ;; this should fail because of a bad manualConfiguration
- (-> (fake-push "T29E48P34" "atomist-skills" "update-clojure-tools-dependencies-skill" "master")
+  (-> (fake-push "T29E48P34" "atomist-skills" "update-clojure-tools-dependencies-skill" "master")
       (assoc :configurations [{:parameters [{:name "policy" :value "manualConfiguration"}
                                             {:name "dependencies" :value "blah"}]}])
       (call-event-handler atomist.main/handler))
