@@ -1,16 +1,11 @@
 {:skill
  {:description
   "Automatically update dependencies based on your own policy",
-  :category ["productivity"],
+  :categories ["DEPENDENCIES", "DEV_EX"],
+  :technologies ["CLOJURE"]
   :package {:use "atomist/package-cljs-skill"},
-  :repository
-  "https://github.com/atomist-skills/update-leiningen-dependencies-skill",
   :license "Apache-2.0",
-  :homepage
-  "https://github.com/atomist-skills/update-leiningen-dependencies-skill",
   :name "atomist/update-clojure-tools-dependencies",
-  :long_description
-  "Track all versions of deps.edn/project.clj dependencies\nand allow users to set cross repo targets for dependency versions.\n",
   :icon
   "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Clojure_logo.svg/2000px-Clojure_logo.svg.png",
   :title "Update Clojure tools Dependencies",
@@ -19,10 +14,8 @@
   :runtime
   {:name "nodejs10",
    :entry_point "eventhandler",
-   :memory 256,
-   :timeout 60},
-  :version "0.1.8",
-  :longDescription "This section supports markdown"},
+   :memory 512,
+   :timeout 60}},
  :resourceProviders
  [{:name "github",
    :description "GitHub",

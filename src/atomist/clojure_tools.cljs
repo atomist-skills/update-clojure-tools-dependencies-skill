@@ -51,7 +51,7 @@
 
     returns array of leiningen fingerprints or empty [] if project.clj is not present"
   [project]
-  (let [f (io/file (. ^js project -baseDir) "deps.edn")]
+  (let [f (io/file (:path project) "deps.edn")]
     (if (.exists f)
       (let [deps (-> (io/slurp f) (cljs.reader/read-string))]
         (->> (:deps deps)
@@ -91,7 +91,7 @@
   [project target-fingerprint]
   (go
     (try
-      (let [f (io/file (. ^js project -baseDir) "deps.edn")
+      (let [f (io/file (:path project) "deps.edn")
             [library-name library-version] (data->library-version (:data target-fingerprint))]
         (log/info "applying " library-name " and " library-version)
         (io/spit f (with-out-str (cljs.pprint/pprint (edit-library (cljs.reader/read-string (io/slurp f)) library-name library-version)))))
