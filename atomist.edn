@@ -11,6 +11,7 @@
   :title "Update Clojure tools Dependencies",
   :author "Atomist",
   :dispatch "single",
+  :kick "0",
   :runtime
   {:name "nodejs10",
    :entry_point "eventhandler",
