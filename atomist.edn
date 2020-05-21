@@ -1,6 +1,6 @@
 {:skill
  {:description
-  "Automatically update dependencies based on your own policy",
+  "Automatically update deps.edn dependencies based on your own policy",
   :categories ["DEPENDENCIES", "DEV_EX"],
   :technologies ["CLOJURE"]
   :package {:use "atomist/package-cljs-skill"},
