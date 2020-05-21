@@ -12,12 +12,7 @@
   "transform the dependencies parameter in a configuration from application/json to the edn format"
   [configuration]
   (letfn [(transform-edn [s]
-            (->> (try
-                   (edn/read-string s)
-                   (catch :default _
-                     (throw (ex-info "dependencies configuration was not valid JSON"
-                                     {:policy "manualconfiguration"
-                                      :message (gstring/format "bad EDN:  %s" s)}))))
+            (->> (edn/read-string s)
                  (map (fn [[k v]] [k (:mvn/version v)]))
                  (into [])
                  (pr-str)))]
@@ -25,7 +20,8 @@
                                         (->> parameters
                                              (map #(if (= "dependencies" (:name %))
                                                      (update % :value transform-edn)
-                                                     %)))))))
+                                                     %))
+                                             (doall))))))
 
 (defn validate-deps-policy
   "validate npm dependency configuration
@@ -37,7 +33,11 @@
       (try
         (let [configurations (->> (:configurations request)
                                   (map #(if (= "manualConfiguration" (deps/policy-type %))
-                                          (transform-dependency-to-edn-format %)
+                                          (try
+                                            (transform-dependency-to-edn-format %)
+                                            (catch :default _
+                                              (log/warnf "Unable to transform %s to valid policy" %)
+                                              (assoc % :error "Unable to transform configuration")))
                                           %))
                                   (map deps/validate-policy))]
           (if (->> configurations
@@ -49,5 +49,5 @@
                                                   (interpose ",")
                                                   (apply str))))))
         (catch :default ex
-          (log/error ex)
-          (<! (api/finish request :failure (-> (ex-data ex) :message))))))))
+          (log/error "unable to validate deps policy" ex)
+          (<! (api/finish request :failure (str "unable to validate dependencies policy" ex))))))))

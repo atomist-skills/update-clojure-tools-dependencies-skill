@@ -2,7 +2,6 @@
   (:require [cljs.pprint :refer [pprint]]
             [cljs.core.async :refer [<! >! timeout chan]]
             [goog.string.format]
-            [atomist.cljs-log :as log]
             [atomist.clojure-tools :as tools]
             [atomist.deps :as deps]
             [atomist.api :as api]
