@@ -1,0 +1,83 @@
+{:description
+ "Automatically update deps.edn dependencies based on your own policy",
+ :package {:use "atomist/package-cljs-skill"},
+ :kick "1",
+ :license "Apache-2.0",
+ :resourceProviders
+ [{:name "github",
+   :description "GitHub",
+   :typeName "GitHubAppResourceProvider",
+   :minRequired 1,
+   :maxAllowed 1}
+  {:name "slack",
+   :description "Slack",
+   :typeName "SlackResourceProvider",
+   :minRequired 0,
+   :maxAllowed 1}],
+ :displayName "update clojure tools dependencies skill",
+ :name "atomist/update-clojure-tools-dependencies",
+ :icon
+ "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Clojure_logo.svg/2000px-Clojure_logo.svg.png",
+ :title "Update Clojure tools Dependencies",
+ :author "Atomist",
+ :dispatch "single",
+ :commands
+ [{:name "ShowToolsDepsDependencies",
+   :description "summary of the clojure tools dependencies",
+   :pattern "^clj fingerprints.*$"}
+  {:name "UpdateToolsDepsDependency",
+   :description "update one dependency",
+   :pattern "^clj update.*$"}
+  {:name "SyncToolsDepsDependency",
+   :description "update one dependency",
+   :pattern "^clj sync.*$"}],
+ :categories ["DEPENDENCIES" "DEV_EX"],
+ :iconUrl
+ "https://raw.githubusercontent.com/cljs/logo/master/cljs.png",
+ :runtime
+ {:name "nodejs10",
+  :entry_point "eventhandler",
+  :memory 512,
+  :timeout 60},
+ :homepageUrl
+ "https://github.com/atomist-skills/update-clojure-tools-dependencies-skill",
+ :parameters
+ [{:singleChoice
+   {:description
+    "Choose a policy for how target dependencies should be discovered by this skill",
+    :displayName "Target Policy",
+    :name "policy",
+    :required true,
+    :options
+    [{:description
+      "Use the latest semver version found within current set of Projects",
+      :text "latest semver used",
+      :value "latestSemVerUsed"}
+     {:description "Use the latest semver available in clojars",
+      :text "latest semver available",
+      :value "latestSemVerAvailable"}
+     {:description
+      "Use the set of deps.edn dependencies configured manually in this Skill",
+      :text "manual",
+      :value "manualConfiguration"}]}}
+  {:string
+   {:description "Manually Configured set of mvn dependency targets",
+    :displayName "deps.edn dependencies",
+    :name "dependencies",
+    :lineStyle "multiple",
+    :placeHolder "[[lib-symbol \"version\"]]",
+    :required false}}
+  {:repoFilter
+   {:description "The set of Repositories.",
+    :displayName "Repository Scope",
+    :name "scope",
+    :required false}}],
+ :namespace "atomist",
+ :technologies ["CLOJURE"],
+ :artifacts
+ {:gcf
+  [{:name "package-cljs-skill",
+    :entryPoint "eventhandler",
+    :memory 512, 
+    :runtime "nodejs10", 
+    :timeout 60}]}}
