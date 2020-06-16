@@ -1,6 +1,5 @@
 {:description
  "Automatically update deps.edn dependencies based on your own policy",
- :package {:use "atomist/package-cljs-skill"},
  :kick "1",
  :license "Apache-2.0",
  :resourceProviders
@@ -14,11 +13,8 @@
    :typeName "SlackResourceProvider",
    :minRequired 0,
    :maxAllowed 1}],
- :displayName "update clojure tools dependencies skill",
- :name "atomist/update-clojure-tools-dependencies",
- :icon
- "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Clojure_logo.svg/2000px-Clojure_logo.svg.png",
- :title "Update Clojure tools Dependencies",
+ :displayName "Update Clojure Tools",
+ :name "update-clojure-tools-dependencies",
  :author "Atomist",
  :dispatch "single",
  :commands
@@ -31,14 +27,9 @@
   {:name "SyncToolsDepsDependency",
    :description "update one dependency",
    :pattern "^clj sync.*$"}],
- :categories ["DEPENDENCIES" "DEV_EX"],
+ :categories ["DEPENDENCIES" "DEVEX"],
  :iconUrl
- "https://raw.githubusercontent.com/cljs/logo/master/cljs.png",
- :runtime
- {:name "nodejs10",
-  :entry_point "eventhandler",
-  :memory 512,
-  :timeout 60},
+ "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Clojure_logo.svg/2000px-Clojure_logo.svg.png",
  :homepageUrl
  "https://github.com/atomist-skills/update-clojure-tools-dependencies-skill",
  :parameters
