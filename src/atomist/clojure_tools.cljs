@@ -1,19 +1,19 @@
 (ns atomist.clojure-tools
   (:require [cljs-node-io.core :as io]
-            [cljs-node-io.fs :as fs]
             [atomist.cljs-log :as log]
-            [cljs.core.async :refer [<! timeout chan]]
             [atomist.json :as json]
             [atomist.sha :as sha]
             [goog.string :as gstring]
             [goog.string.format]
-            [clojure.string :as s])
+            [clojure.string :as s]
+            [cljs.pprint :refer [pprint]]
+            [cljs.tools.reader.edn :as edn])
   (:require-macros [cljs.core.async.macros :refer [go]]))
 
 (defn library-name->name [s]
   (-> s
-      (s/replace-all #"@" "")
-      (s/replace-all #"/" "::")))
+      (s/replace #"@" "")
+      (s/replace #"/" "::")))
 
 (defn data->sha [data]
   (sha/sha-256 (json/->str data)))
@@ -54,7 +54,7 @@
   (go
     (let [f (io/file (:path project) "deps.edn")]
       (if (.exists f)
-        (let [deps (-> (io/slurp f) (cljs.reader/read-string))]
+        (let [deps (-> (io/slurp f) (edn/read-string))]
           (->> (:deps deps)
                (map (fn [[sym version]] [(str sym) (:mvn/version version)]))
                (map (fn [data]
@@ -78,7 +78,7 @@
                        [l m])))
               (into {}))))
 
-(defn- apply-library-editor
+(defn apply-library-editor
   "apply a library edit inside of a PR
 
     params
@@ -95,7 +95,7 @@
       (let [f (io/file (:path project) "deps.edn")
             [library-name library-version] (data->library-version (:data target-fingerprint))]
         (log/info "applying " library-name " and " library-version)
-        (io/spit f (with-out-str (cljs.pprint/pprint (edit-library (cljs.reader/read-string (io/slurp f)) library-name library-version)))))
+        (io/spit f (with-out-str (pprint (edit-library (edn/read-string (io/slurp f)) library-name library-version)))))
       :success
       (catch :default ex
         (log/error "failure updating deps.edn for dependency change" ex)

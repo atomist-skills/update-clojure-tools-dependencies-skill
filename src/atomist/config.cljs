@@ -2,8 +2,7 @@
   (:require [atomist.deps :as deps]
             [atomist.api :as api]
             [atomist.cljs-log :as log]
-            [cljs.core.async :refer [<! timeout chan]]
-            [goog.string :as gstring]
+            [cljs.core.async :refer [<!]]
             [goog.string.format]
             [clojure.edn :as edn])
   (:require-macros [cljs.core.async.macros :refer [go]]))
