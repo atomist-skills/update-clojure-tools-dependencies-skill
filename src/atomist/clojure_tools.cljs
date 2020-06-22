@@ -54,19 +54,23 @@
   (go
     (let [f (io/file (:path project) "deps.edn")]
       (if (.exists f)
-        (let [deps (-> (io/slurp f) (edn/read-string))]
-          (->> (:deps deps)
-               (map (fn [[sym version]] [(str sym) (:mvn/version version)]))
-               (map (fn [data]
-                      {:type "maven-direct-dep"
-                       :name (library-name->name (nth data 0))
-                       :displayName (nth data 0)
-                       :displayValue (nth data 1)
-                       :displayType "MVN Coordinate"
-                       :data (->coordinate data)
-                       :sha (data->sha (->coordinate data))
-                       :abbreviation "m2"
-                       :version "0.0.1"}))))
+        (try
+          (let [deps (-> (io/slurp f) (edn/read-string))]
+            (->> (:deps deps)
+                 (map (fn [[sym version]] [(str sym) (:mvn/version version)]))
+                 (map (fn [data]
+                        {:type "maven-direct-dep"
+                         :name (library-name->name (nth data 0))
+                         :displayName (nth data 0)
+                         :displayValue (nth data 1)
+                         :displayType "MVN Coordinate"
+                         :data (->coordinate data)
+                         :sha (data->sha (->coordinate data))
+                         :abbreviation "m2"
+                         :version "0.0.1"}))))
+          (catch :default ex
+            (log/warn "unable to extract fingerprints from deps.edn:  " ex)
+            []))
         []))))
 
 (defn- edit-library [edn lib version]

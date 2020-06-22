@@ -33,3 +33,14 @@
                                                                       :pattern ".*"
                                                                       :validInput "[lib version]"}]
                                       [api/extract-cli-parameters [[nil "--dependency dependency" "[lib version]"]]])))
+
+(comment
+ (enable-console-print!)
+ (require 'atomist.local-runner)
+ (atomist.local-runner/set-env :prod-github-auth)
+ (-> (atomist.local-runner/fake-push "T29E48P34" "atomist-skills" {:name "clj-kondo-skill" :id "T29E48P34_T29E48P34_atomist-skills_273798003"} "master")
+     (assoc-in [:configurations] [{:name "default"
+                                   :parameters [{:name "policy" :value "latestSemVerUsed"}
+                                                {:name "dependencies" :value "[\"com.atomist/api-cljs\",\"com.atomist/skill-bundler\",\"org.clojure/clojurescript\"]"}
+                                                {:name "scope" :value "{}"}]}])
+     (atomist.local-runner/call-event-handler handler)))
