@@ -27,7 +27,7 @@
   {:name "SyncToolsDepsDependency",
    :description "update one dependency",
    :pattern "^clj sync.*$"}],
- :categories ["DEPENDENCIES" "DEVEX"],
+ :categories ["DEPENDENCIES" "SECURITY"],
  :iconUrl
  "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Clojure_logo.svg/2000px-Clojure_logo.svg.png",
  :homepageUrl
