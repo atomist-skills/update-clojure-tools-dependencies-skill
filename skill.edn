@@ -28,7 +28,7 @@
    :minRequired 0,
    :maxAllowed 1}],
  :displayName "Update Clojure Tools",
- :name "update-clojure-tools-dependencies",
+ :name "update-clojure-tools-dependencies-skill",
  :author "Atomist",
  :dispatch "single",
  :commands
