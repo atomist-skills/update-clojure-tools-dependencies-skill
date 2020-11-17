@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased](https://github.com/atomist-skills/update-clojure-tools-dependencies-skill/compare/0.1.34...HEAD)
+## [Unreleased](https://github.com/atomist-skills/update-clojure-tools-dependencies-skill/compare/0.2.1...HEAD)
+
+## [0.2.1](https://github.com/atomist-skills/update-clojure-tools-dependencies-skill/compare/0.1.34...0.2.1) - 2020-11-17
 
 ## [0.1.34](https://github.com/atomist-skills/update-clojure-tools-dependencies-skill/compare/0.2.0...0.1.34) - 2020-11-17
 
